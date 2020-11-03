@@ -1,0 +1,15 @@
+orb_slam_2_ros/CMakeLists.txt.user
+orb_slam_2_ros/.idea/
+orb_slam_2_ros/cmake-build-debug
+orb_slam_2_ros/KeyFrameTrajectory.txt
+orb_slam_2_ros/Thirdparty/DBoW2/build/
+orb_slam_2_ros/Thirdparty/DBoW2/lib/
+orb_slam_2_ros/Thirdparty/g2o/build/
+orb_slam_2_ros/Thirdparty/g2o/config.h
+orb_slam_2_ros/Thirdparty/g2o/lib/
+orb_slam_2_ros/Vocabulary/ORBvoc.txt
+orb_slam_2_ros/build/
+orb_slam_2_ros/*~
+orb_slam_2_ros/lib/
+orb_slam_2_ros/.DS_Store
+orb_slam_2_ros/.sync-config.cson
