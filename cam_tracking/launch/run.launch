@@ -1,5 +1,5 @@
 
 <launch>
   <include file="$(find orb_slam2_ros)/ros/launch/test.launch"/>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find cam_tracking)/config/camtrack.rviz"/>
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find cam_tracking)/config/camtrack.rviz"/> -->
 </launch>

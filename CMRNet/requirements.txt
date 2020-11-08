@@ -1,0 +1,19 @@
+scikit_image
+tqdm==4.19.9
+pandas
+h5py
+matplotlib
+scipy
+pyquaternion
+opencv-python
+cupy_cuda90==6.0.0
+pykitti
+numpy
+open3d-python==0.7.0.0
+Pillow
+scikit-image
+torch==1.0.1.post2
+torchvision==0.2.2
+sacred==0.8.1
+# -e ./
+# -e ./models/CMRNet/correlation_package

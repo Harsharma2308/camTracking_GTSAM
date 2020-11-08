@@ -1,6 +1,4 @@
 import sys
-paths = ['/home/stars/Documents/sof/slam/project/ros_ws/devel/lib/python3/dist-packages', '/home/stars/anaconda3/envs/slam/lib/python37.zip', '/home/stars/anaconda3/envs/slam/lib/python3.7', '/home/stars/anaconda3/envs/slam/lib/python3.7/lib-dynload', '/home/stars/anaconda3/envs/slam/lib/python3.7/site-packages']
-sys.path.extend(paths);sys.path.reverse()
 import rospy
 import math
 import tf

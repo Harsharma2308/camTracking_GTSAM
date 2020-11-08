@@ -15,3 +15,4 @@ orb_slam_2_ros/.DS_Store
 orb_slam_2_ros/.sync-config.cson
 .vscode/settings.json
 cam_tracking/src/__pycache__/
+.vim/
