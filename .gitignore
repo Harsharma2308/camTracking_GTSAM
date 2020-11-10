@@ -18,3 +18,4 @@ cam_tracking/src/__pycache__/
 .vim/
 .ipynb_checkpoints/
 geometry2/
+cam_tracking/data/kitti_images.csv
