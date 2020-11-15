@@ -48,6 +48,12 @@ with open(pose_file, 'r') as f:
         R = torch.tensor([float(x[7]), float(x[4]), float(x[5]), float(x[6])])
         poses.append(to_rotation_matrix(R, T))
 
+# kitti = pykitti.odometry("/home/arcot/Projects/SLAM_Project/dataset", "00")
+# poses = [torch.from_numpy(
+#             kitti.poses[i] @ kitti.calib.T_cam0_velo
+#         )
+#          for i in range(len(kitti.poses))]
+
 map_file = args.map
 first_frame = int(args.start)
 last_frame = min(len(poses), int(args.end))
@@ -86,7 +92,6 @@ if map_file is None:
     o3.write_point_cloud(f'./map-{sequence}_{args.voxel_size}_{first_frame}-{last_frame}.pcd', downpcd)
 else:
     downpcd = o3.read_point_cloud(map_file)
-
 
 voxelized = torch.tensor(downpcd.points, dtype=torch.float)
 voxelized = torch.cat((voxelized, torch.ones([voxelized.shape[0], 1], dtype=torch.float)), 1)
