@@ -1,3 +1,4 @@
+
 <launch>
   <node name="orb_slam2_mono" pkg="orb_slam2_ros"
       type="orb_slam2_ros_mono" output="screen">
@@ -45,5 +46,9 @@
       <param name="camera_p1" type="double" value="0" />
       <param name="camera_p2" type="double" value="0" />
       <param name="camera_k3" type="double" value="0" />
-  </node>
+    </node>
+      <!-- <node pkg="tf" type="static_transform_publisher" name="world_to_map_broadcaster" args="-3.24881101e+00 -1.88648701e+00  5.53917809e+01  5.28733278e-03 -2.82244236e-02 -7.62451906e-05  9.99587625e-01 world camera_link_kitti 100" /> -->
+      <node pkg="tf" type="static_transform_publisher" name="world_to_camera_link_kitti" args="5.55111512e-17  3.33066907e-16 -4.44089210e-16  0.00000000e+00 -2.16840441e-18  8.67361764e-19  1.00000000e+00 world camera_link_kitti 100" />
+    <node pkg="tf" type="static_transform_publisher" name="camera_link_kitti_to_map" args="0 0 0 0 -0.707 0 0.707 camera_link_kitti map 100" />
+
 </launch>
