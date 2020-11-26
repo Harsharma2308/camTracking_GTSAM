@@ -117,8 +117,8 @@ class VisualOdometry:
     def get_current_pose(self):
         if self.cur_t is None:
             return None
-        quat = R.from_matrix(self.cur_R).as_quat()
-        t = self.cur_t
+        quat = R_scipy.from_matrix(self.cur_R).as_quat()
+        t = self.cur_t.flatten()
         return np.array([*t, *quat])
     
     def get_current_transform(self):
@@ -127,8 +127,7 @@ class VisualOdometry:
         R = np.zeros((4,4))
         R[-1,-1] = 1
         R[:3,:3] = self.cur_R
-        T = np.zeros((4,4))
-        T[:3,-1] = self.cur_t.reshape(3,-1)
-        T[-1,-1] = 1
+        T = np.eye(4)
+        T[:3,-1] = self.cur_t.flatten()
         return T @ R
 

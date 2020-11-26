@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/arcot/Projects/SLAM_Project/ws/devel_isolated/tf2_msgs/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/devel_isolated/orb_slam2_ros/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_bullet/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_eigen/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_geometry_msgs/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_kdl/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_msgs/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_ros/include/**",
+        "/home/arcot/Projects/SLAM_Project/ws/src/geometry2/tf2_sensor_msgs/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ]
+}
