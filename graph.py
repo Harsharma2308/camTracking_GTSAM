@@ -67,7 +67,7 @@ class FactorGraph(object):
         cur_pose_estimate = state['cur_pose_estimate']
         cur_pose_gps = state['cur_pose_gps']
         self.add_odom(delta_odom,cur_pose_estimate)
-        # self.add_gps(cur_pose_gps)
+        self.add_gps(cur_pose_gps)
         # if(self.visualize and self.initial_estimate is not None):
         #     self.plot()
         self.optimize()

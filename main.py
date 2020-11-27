@@ -17,7 +17,7 @@ if __name__ == '__main__':
         "sequence": "00"
     }
     # create cmrnet inference class
-    # cmr_manager = RefineEstimate(config)
+    cmr_manager = RefineEstimate(config)
     kitti = pykitti.odometry("/home/arcot/Projects/SLAM_Project/dataset", "00")
     # create vo inference class
     dataset_image_dir = '/home/arcot/Projects/SLAM_Project/dataset/sequences/'
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     vo = VisualOdometry(cam, dataset_gt_poses_dir+'00.txt')
     traj = np.zeros((600, 600, 3), dtype=np.uint8)
 
-    length_traj = 500
+    length_traj = 50
     trajectory = np.empty((length_traj, 3))
     gt_trajectory = np.empty((length_traj, 3))
 
@@ -54,9 +54,13 @@ if __name__ == '__main__':
             # call cmrnet inference
             current_transform = vo.get_current_transform()
             current_pose = vo.get_current_pose()
-            # refinement, _ = cmr_manager.refine_pose_estimate(current_transform, img_rgb)
-            cmr_global_transform_estimate = current_transform # @ refinement
+            refinement, _ = cmr_manager.refine_pose_estimate(current_transform, img_rgb)
+            cmr_global_transform_estimate = current_transform @ refinement
             gps_pos = cmr_global_transform_estimate[:3,-1]
+            print("##########################")
+            print(current_pose)
+            print(refinement)
+            print(gps_pos)
             state = {
                 "delta_odom":vo.delta_odom,
                 "cur_pose_estimate":current_pose,

@@ -13,6 +13,7 @@ from torchvision import transforms
 import visibility
 import matplotlib.pyplot as plt
 import copy
+from scipy.spatial.transform import Rotation as R_scipy
 
 class RefineEstimate(object):
     """
@@ -167,15 +168,22 @@ class RefineEstimate(object):
                 T_predicted, R_predicted = model(processed_image.unsqueeze(0), pc_image.unsqueeze(0))
                 R_predicted = quat2mat(R_predicted[0])
                 T_predicted = tvector2mat(T_predicted[0])
+                print("#######################")
                 RT_predicted = torch.mm(T_predicted, R_predicted)
+                print(RT_predicted)
                 RT_cumulative = torch.mm(RT_cumulative, RT_predicted)
                 out3 = overlay_imgs(processed_image, pc_image.unsqueeze(0))
                 local_pc_in_cam_frame = rotate_forward(local_pc_in_cam_frame, RT_predicted)
                 pc_image = self.project_lidar(local_pc_in_cam_frame, image_shape, shape_pad)
                 images.append(out3)
         # neural net predicted relative pose for refining velo coordinates. need to get into cam frame
-        RT_cumulative = self.velo2cam @ RT_cumulative @ self.cam2velo
-        return RT_cumulative.cpu().numpy(), images
+        RT_cumulative = RT_cumulative.cpu().numpy()
+        old_axes=R_scipy.from_matrix(RT_cumulative[:3,:3]).as_euler(seq='xyz')
+        order=[1,2,0]
+        new_axes=old_axes[order]
+        RT_cumulative[:3,:3] = R_scipy.from_euler('xyz',new_axes).as_matrix()
+        RT_cumulative[:3,-1] = RT_cumulative[order,-1]
+        return RT_cumulative, images
 
 # example to use
 if __name__ == '__main__':
@@ -191,10 +199,24 @@ if __name__ == '__main__':
     # generate a perturbed pose and feed it to the net
     kitti = pykitti.odometry("/home/arcot/Projects/SLAM_Project/dataset", "00")
     pose1 = copy.copy(kitti.poses[100])
-    pose1[2,-1] += 1
+    cam0velo = kitti.calib.T_cam0_velo
+    cam2velo = kitti.calib.T_cam2_velo
+    cam0_to_cam2 = np.linalg.inv(cam2velo) @ cam0velo
+    # print(pose1)
+    pose1 =  cam0_to_cam2 @ pose1
+    # print(pose1)
+    # print(cam0_to_cam2)
+    R = R_scipy.from_euler('xyz', [15,0,0], degrees = True).as_matrix()
+    T = np.eye(4)
+    T[:3,:3] = R
+    T[0,-1] = 1
+    pose1 = pose1 @ T
+    # pose1[0,-1] += 2
     image = kitti.get_cam2(100)
     pose, images = cmr_manager.refine_pose_estimate(pose1, image)
+    # print(pose1)
     print(pose)
+    print(np.linalg.inv(T))
     for i in range(len(images)):
         plt.figure(figsize=(20,10))
         plt.imshow(images[i])
