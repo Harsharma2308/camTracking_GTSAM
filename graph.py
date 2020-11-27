@@ -5,11 +5,19 @@ import gtsam.utils.plot as gtsam_plot
 from gtsam.utils.circlePose3 import *
 from factor_graph_utils import *
 from config import config
+from scipy.spatial.transform import Rotation as R_scipy
+
+
 class FactorGraph(object):
     '''
     A class to add factors and update the estimates
     '''
-    def __init__(self,config,init_pose):
+    def __init__(self,config,pose_3rd):
+        quat = R_scipy.from_matrix(pose_3rd[:3, :3]).as_quat()
+        quat = np.roll(quat, 1)
+        t = pose_3rd[:3, -1]
+        init_pose = np.array([*t, *quat])
+
         self.result = None
         self.marginals = None
         self.node_idx = 0

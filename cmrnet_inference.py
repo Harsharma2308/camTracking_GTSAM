@@ -168,9 +168,7 @@ class RefineEstimate(object):
                 T_predicted, R_predicted = model(processed_image.unsqueeze(0), pc_image.unsqueeze(0))
                 R_predicted = quat2mat(R_predicted[0])
                 T_predicted = tvector2mat(T_predicted[0])
-                print("#######################")
                 RT_predicted = torch.mm(T_predicted, R_predicted)
-                print(RT_predicted)
                 RT_cumulative = torch.mm(RT_cumulative, RT_predicted)
                 out3 = overlay_imgs(processed_image, pc_image.unsqueeze(0))
                 local_pc_in_cam_frame = rotate_forward(local_pc_in_cam_frame, RT_predicted)
@@ -184,6 +182,15 @@ class RefineEstimate(object):
         RT_cumulative[:3,:3] = R_scipy.from_euler('xyz',new_axes).as_matrix()
         RT_cumulative[:3,-1] = RT_cumulative[order,-1]
         return RT_cumulative, images
+
+    def update(self, current_transform, img_rgb):
+        refinement, _ = self.refine_pose_estimate(
+            current_transform, img_rgb)
+        # perform refinement
+        cmr_global_transform_estimate = current_transform @ refinement
+        gps_pos = cmr_global_transform_estimate[:3, -1]
+        return gps_pos
+
 
 # example to use
 if __name__ == '__main__':

@@ -45,7 +45,8 @@ class VisualOdometry:
         self.last_frame = None
         self.cur_R = None
         self.cur_t = None
-        self.delta_odom = np.empty(7,) #7x1 delta pose vector between consecutive frames represented in prev frame
+        # 7x1 delta pose vector between consecutive frames represented in prev frame
+        self.delta_odom = np.empty(7,)
         self.px_ref = None
         self.px_cur = None
         self.focal = cam.fx
@@ -91,18 +92,12 @@ class VisualOdometry:
         _, R, t, mask = cv2.recoverPose(
             E, self.px_cur, self.px_ref, focal=self.focal, pp=self.pp)
         absolute_scale = self.getAbsoluteScale(frame_id)
-        
-        # Compute delta between consecutive poses
-        
-        # self.delta_odom[3:] = np.roll(self.delta_odom[3:],1) #quat stored as qw,qx,qy,qz
-        # self.delta_odom[:3] = t.flatten()
-        # self.delta_odom[3:] = R_scipy.from_matrix(self.cur_R).as_quat().flatten()
-        
-        prev_R=self.cur_R
-        prev_t=self.cur_t
+
+        prev_R = self.cur_R
+        prev_t = self.cur_t
         T_prev_w = np.eye(4)
-        T_prev_w[:3,:4]=np.concatenate((self.cur_R,self.cur_t),axis=1)
-        
+        T_prev_w[:3, :4] = np.concatenate((self.cur_R, self.cur_t), axis=1)
+
         if(absolute_scale > 0.1):
             self.cur_t = self.cur_t + absolute_scale*self.cur_R.dot(t)
             self.cur_R = R.dot(self.cur_R)
@@ -112,16 +107,13 @@ class VisualOdometry:
                 [x.pt for x in self.px_cur], dtype=np.float32)
         self.px_ref = self.px_cur
         T_cur_w = np.eye(4)
-        T_cur_w[:3,:4]=np.concatenate((self.cur_R,self.cur_t),axis=1)
-        
-        self.delta_odom= inv(T_prev_w)@T_cur_w   #transformation representing movement from previous frame to current frame, in previous frame
+        T_cur_w[:3, :4] = np.concatenate((self.cur_R, self.cur_t), axis=1)
+
+        # transformation representing movement from previous frame to current frame, in previous frame
+        self.delta_odom = inv(T_prev_w)@T_cur_w
         self.delta_odom = matrix2posevec(self.delta_odom)
-        self.delta_odom[3:] = np.roll(self.delta_odom[3:],1) #quat stored as qw,qx,qy,qz
-
-
-        
-        
-        
+        # quat stored as qw,qx,qy,qz
+        self.delta_odom[3:] = np.roll(self.delta_odom[3:], 1)
 
     def update(self, img, frame_id):
         assert(img.ndim == 2 and img.shape[0] == self.cam.height and img.shape[1] ==
@@ -138,18 +130,73 @@ class VisualOdometry:
     def get_current_pose(self):
         if self.cur_t is None:
             return None
-        quat = R_scipy.from_matrix(self.cur_R).as_quat() #x,y,z,w
-        quat = np.roll(quat,1)
+        quat = R_scipy.from_matrix(self.cur_R).as_quat()  # x,y,z,w
+        quat = np.roll(quat, 1)
         t = self.cur_t.flatten()
         return np.array([*t, *quat])
-    
+
     def get_current_transform(self):
         if self.cur_t is None:
             return None
-        R = np.zeros((4,4))
-        R[-1,-1] = 1
-        R[:3,:3] = self.cur_R
+        R = np.zeros((4, 4))
+        R[-1, -1] = 1
+        R[:3, :3] = self.cur_R
         T = np.eye(4)
-        T[:3,-1] = self.cur_t.flatten()
+        T[:3, -1] = self.cur_t.flatten()
         return T @ R
+
+
+class VisualOdometryManager(object):
+    def __init__(self, config):
+        # create vo inference class
+        self.dataset_image_dir = config["dataset_image_dir"]
+        self.dataset_gt_poses_dir = config["dataset_gt_poses_dir"]
+
+        cam = PinholeCamera(1241.0, 376.0, 718.8560,
+                            718.8560, 607.1928, 185.2157)
+        self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir+'00.txt')
+        self.traj_bg = np.zeros((600, 600, 3), dtype=np.uint8)
+
+        self.length_traj = config["length_traj"]
+        self.trajectory = np.empty((self.length_traj, 3))
+        self.gt_trajectory = np.empty((self.length_traj, 3))
+
+    def initialize(self):
+        self.update(0)
+        self.update(1)
+
+    def update(self, img_id):
+        img = cv2.imread(self.dataset_image_dir+'00/image_0/' +
+                         str(img_id).zfill(6)+'.png', 0)
+
+        self.vo.update(img, img_id)
+        current_transform = None
+        current_pose = None
+
+        if img_id >= 2:
+            self.trajectory[img_id] = self.vo.cur_t.flatten()
+            self.gt_trajectory[img_id] = self.vo.trueX, self.vo.trueY, self.vo.trueZ
+            current_transform = self.vo.get_current_transform()
+            current_pose = self.vo.get_current_pose()
+
+        return current_pose, current_transform, self.vo.delta_odom
+
+    def plot(self, img_id):
+        x, y, z = 0, 0, 0
+        if self.vo.cur_t is not None:
+            x, y, z = self.vo.cur_t[0], self.vo.cur_t[1], self.vo.cur_t[2]
+        draw_x, draw_y = int(x)+290, int(z)+90
+        true_x, true_y = int(self.vo.trueX)+290, int(self.vo.trueZ)+90
+
+        cv2.circle(self.traj_bg, (draw_x, draw_y), 1,
+                   (img_id*255/(self.length_traj-1), 255-img_id*255/(self.length_traj-1), 0), 1)
+        cv2.circle(self.traj_bg, (true_x, true_y), 1, (0, 0, 255), 2)
+        cv2.rectangle(self.traj_bg, (10, 20), (600, 60), (0, 0, 0), -1)
+        text = "Coordinates: x=%2fm y=%2fm z=%2fm" % (x, y, z)
+        cv2.putText(self.traj_bg, text, (20, 40), cv2.FONT_HERSHEY_PLAIN,
+                    1, (255, 255, 255), 1, 8)
+
+        cv2.imshow('Trajectory', self.traj_bg)
+
+        cv2.waitKey(1)
 

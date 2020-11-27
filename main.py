@@ -9,13 +9,6 @@ from visual_odometry import PinholeCamera, VisualOdometry
 from tqdm import tqdm
 
 if __name__ == '__main__':
-    # create the config dictionary
-    cmrnet_config = {
-        "weight_paths": ['./CMRNet/checkpoints/iter1.tar','./CMRNet/checkpoints/iter2.tar','./CMRNet/checkpoints/iter3.tar'],
-        "path_to_map": "./map-00_0.1_0-300.pcd",
-        "path_to_dataset": "./CMRNet/KITTI_ODOMETRY",
-        "sequence": "00"
-    }
     # create cmrnet inference class
     cmr_manager = RefineEstimate(config)
     kitti = pykitti.odometry("/home/arcot/Projects/SLAM_Project/dataset", "00")
@@ -90,3 +83,4 @@ if __name__ == '__main__':
 
             cv2.waitKey(1)
     fg.plot()
+    print(fg.current_estimate)
