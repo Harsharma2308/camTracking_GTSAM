@@ -3,15 +3,19 @@ import gtsam.utils.plot as gtsam_plot
 from matplotlib import pyplot as plt
 import numpy as np
 
+import pickle
+
+
+
 def visual_ISAM2_plot(result):
     # Declare an id for the figure
     fignum = 0
-
+    fig = None
     fig = plt.figure(fignum)
     axes = fig.gca(projection='3d')
     plt.cla()
 
-    gtsam_plot.plot_3d_points(fignum, result, 'rx')
+    gtsam_plot.plot_trajectory(fignum, result)
 
     # Plot cameras
     i = 0
@@ -21,10 +25,14 @@ def visual_ISAM2_plot(result):
         i += 1
 
     # draw
-    axes.set_xlim3d(-40, 40)
-    axes.set_ylim3d(-40, 40)
-    axes.set_zlim3d(-40, 40)
-    plt.pause(1)
+    # axes.set_xlim3d(-40, 40)
+    # axes.set_ylim3d(-40, 40)
+    # axes.set_zlim3d(-40, 40)
+    # plt.show()
+    axes.view_init(elev=180,azim=90)
+    plt.savefig("traj.png")
+    pickle.dump(fig, open("fig.pickle","wb"))
+    plt.show()
 
 
 def X(i):
@@ -33,5 +41,3 @@ def X(i):
 
 def gen_pose(pose:np.ndarray):
     return gtsam.Pose3(r=gtsam.Rot3.Quaternion(*pose[3:]), t=gtsam.Point3(*pose[:3]))
-
-

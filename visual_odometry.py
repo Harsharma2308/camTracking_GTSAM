@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 from scipy.spatial.transform import Rotation as R_scipy
-
+from numpy.linalg import inv
+from utils import *
 STAGE_FIRST_FRAME = 0
 STAGE_SECOND_FRAME = 1
 STAGE_DEFAULT_FRAME = 2
@@ -90,8 +91,17 @@ class VisualOdometry:
         _, R, t, mask = cv2.recoverPose(
             E, self.px_cur, self.px_ref, focal=self.focal, pp=self.pp)
         absolute_scale = self.getAbsoluteScale(frame_id)
-        self.delta_odom[:3] = t.flatten()
-        self.delta_odom[3:] = R_scipy.from_matrix(self.cur_R).as_quat().flatten()
+        
+        # Compute delta between consecutive poses
+        
+        # self.delta_odom[3:] = np.roll(self.delta_odom[3:],1) #quat stored as qw,qx,qy,qz
+        # self.delta_odom[:3] = t.flatten()
+        # self.delta_odom[3:] = R_scipy.from_matrix(self.cur_R).as_quat().flatten()
+        
+        prev_R=self.cur_R
+        prev_t=self.cur_t
+        T_prev_w = np.eye(4)
+        T_prev_w[:3,:4]=np.concatenate((self.cur_R,self.cur_t),axis=1)
         
         if(absolute_scale > 0.1):
             self.cur_t = self.cur_t + absolute_scale*self.cur_R.dot(t)
@@ -101,6 +111,17 @@ class VisualOdometry:
             self.px_cur = np.array(
                 [x.pt for x in self.px_cur], dtype=np.float32)
         self.px_ref = self.px_cur
+        T_cur_w = np.eye(4)
+        T_cur_w[:3,:4]=np.concatenate((self.cur_R,self.cur_t),axis=1)
+        
+        self.delta_odom= inv(T_prev_w)@T_cur_w   #transformation representing movement from previous frame to current frame, in previous frame
+        self.delta_odom = matrix2posevec(self.delta_odom)
+        self.delta_odom[3:] = np.roll(self.delta_odom[3:],1) #quat stored as qw,qx,qy,qz
+
+
+        
+        
+        
 
     def update(self, img, frame_id):
         assert(img.ndim == 2 and img.shape[0] == self.cam.height and img.shape[1] ==
@@ -117,7 +138,8 @@ class VisualOdometry:
     def get_current_pose(self):
         if self.cur_t is None:
             return None
-        quat = R_scipy.from_matrix(self.cur_R).as_quat()
+        quat = R_scipy.from_matrix(self.cur_R).as_quat() #x,y,z,w
+        quat = np.roll(quat,1)
         t = self.cur_t.flatten()
         return np.array([*t, *quat])
     

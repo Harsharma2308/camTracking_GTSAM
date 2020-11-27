@@ -58,27 +58,19 @@ class FactorGraph(object):
         
     def optimize(self):
         self.isam.update(self.graph, self.initial_estimate)
-        # self.isam.update()
-        # self.isam.update()
-        # self.isam.update()
-        # self.isam.update()
-        # self.isam.update()
         self.current_estimate = self.isam.calculateEstimate()
-
         self.graph.resize(0)
         self.initial_estimate.clear()
-        # self.graph.resize(0)
-        # self.initial_estimate.clear()
-
+        
     def update(self,state):
         delta_odom = state['delta_odom']
         cur_pose_estimate = state['cur_pose_estimate']
         cur_pose_gps = state['cur_pose_gps']
         self.add_odom(delta_odom,cur_pose_estimate)
-        self.add_gps(cur_pose_gps)
+        # self.add_gps(cur_pose_gps)
+        # if(self.visualize and self.initial_estimate is not None):
+        #     self.plot()
         self.optimize()
-        if(self.visualize):
-            self.plot()
         self.node_idx += 1
     
     def plot(self):
