@@ -8,6 +8,7 @@ from scipy.spatial.transform import Rotation as R_scipy
 from visual_odometry import VisualOdometryManager
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from logger import Logger
 
 if __name__ == "__main__":
     # create vo inference class
@@ -22,7 +23,9 @@ if __name__ == "__main__":
 
     # create factor graph object with a prior as the third pose
     fg = FactorGraph(config, pose_3rd)
-
+    
+    # create a logger
+    logger = Logger(config["log_file"])
     # the main loop
     axes = [plt.subplot(3, 1, i + 1) for i in range(3)]
     for img_id in tqdm(range(2, config["length_traj"])):
@@ -32,15 +35,12 @@ if __name__ == "__main__":
         gps_pos, cmr_global_transform_estimate, images = cmr_manager.update(
             current_transform, img_rgb
         )
+        logger.write_record(cmr_global_transform_estimate)
         vo_manager.refine_pose(cmr_global_transform_estimate)
         print("##########################")
         print("vo_estimate", current_pose[:3])
         print("gps_estimate", gps_pos)
         print("gt", kitti.poses[img_id][:3, -1])
-        for i in range(len(images)):
-            axes[i].imshow(images[i])
-            plt.pause(0.2)
-        # plt.show()
         # create a state
         state = {
             "delta_odom": delta_odom,
@@ -51,8 +51,12 @@ if __name__ == "__main__":
 
         # visualisation code
         if config["plot_vo"]:
+            for i in range(len(images)):
+                axes[i].imshow(images[i])
+                plt.pause(0.2)
             vo_manager.plot(img_id)
 
     if config["plot_vo"]:
         fg.plot()
     # print(fg.current_estimate)
+    logger.close()

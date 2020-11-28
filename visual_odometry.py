@@ -195,12 +195,12 @@ class VisualOdometryManager(object):
         self.update(1)
 
     def refine_pose(self, gps_pose_transformation):
-        self.vo.trueX, self.vo.trueY, self.vo.trueZ = gps_pose_transformation[:3, -1]
+        self.vo.cur_t = gps_pose_transformation[:3, -1].reshape(3,1)
         self.vo.cur_R = gps_pose_transformation[:3, :3]
 
     def update(self, img_id):
         img = cv2.imread(
-            self.dataset_imagem_dir + "00/image_0/" + str(img_id).zfill(6) + ".png", 0
+            self.dataset_image_dir + "00/image_0/" + str(img_id).zfill(6) + ".png", 0
         )
 
         self.vo.update(img, img_id)
