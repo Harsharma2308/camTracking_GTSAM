@@ -7,6 +7,7 @@ import cv2
 from scipy.spatial.transform import Rotation as R_scipy
 from visual_odometry import VisualOdometryManager
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     # create vo inference class
@@ -23,15 +24,20 @@ if __name__ == '__main__':
     fg = FactorGraph(config, pose_3rd)
 
     # the main loop
+    axes = [plt.subplot(3,1,i+1) for i in range(3)]
     for img_id in tqdm(range(2, config["length_traj"])):
         img_rgb = kitti.get_cam2(img_id)
         current_pose, current_transform, delta_odom = vo_manager.update(img_id)
         # call cmrnet inference
-        gps_pos = cmr_manager.update(current_transform, img_rgb)
+        gps_pos, images = cmr_manager.update(current_transform, img_rgb)
         print("##########################")
         print("vo_estimate", current_pose[:3])
         print("gps_estimate", gps_pos)
         print("gt", kitti.poses[img_id][:3,-1])
+        for i in range(len(images)):
+            axes[i].imshow(images[i])
+            plt.pause(0.2)
+        # plt.show()
         # create a state
         state = {
             "delta_odom": delta_odom,

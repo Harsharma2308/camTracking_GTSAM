@@ -13,7 +13,7 @@ config = {
     "sequence": "00",
     "dataset_image_dir": "/home/arcot/Projects/SLAM_Project/dataset/sequences/",
     "dataset_gt_poses_dir": "/home/arcot/Projects/SLAM_Project/dataset/poses/",
-    "length_traj": 500,
+    "length_traj": 300,
     "dataset_path": "/home/arcot/Projects/SLAM_Project/dataset", 
     "seq": "00"
 }

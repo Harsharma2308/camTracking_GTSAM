@@ -184,12 +184,12 @@ class RefineEstimate(object):
         return RT_cumulative, images
 
     def update(self, current_transform, img_rgb):
-        refinement, _ = self.refine_pose_estimate(
+        refinement, images = self.refine_pose_estimate(
             current_transform, img_rgb)
         # perform refinement
         cmr_global_transform_estimate = current_transform @ refinement
         gps_pos = cmr_global_transform_estimate[:3, -1]
-        return gps_pos
+        return gps_pos, images
 
 
 # example to use
