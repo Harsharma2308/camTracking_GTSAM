@@ -32,12 +32,30 @@ class RefineEstimate(object):
 
     def __init__(self, config):
         path_to_dataset = config["path_to_dataset"]
-        path_to_map = config["path_to_map"]
+        self.path_to_map_folder = config["path_to_map_folder"]
         weight_paths = config["weight_paths"]
         sequence = config["sequence"]
         # setup kitti manager
         self.kitti = pykitti.odometry(path_to_dataset, sequence)
         # load the downsampled map
+        self.map, self.map_intensity = self.load_map(self.path_to_map_folder+"/0.pcd")
+        # load the transformations
+        velo2cam2 = torch.from_numpy(self.kitti.calib.T_cam2_velo).float().to("cuda")
+        self.velo2cam = velo2cam2
+        self.cam2velo = self.velo2cam.inverse()
+        # load the models into a list
+        self.image_shape = (384, 1280)
+        self.models = self.load_models(weight_paths)
+        # initialize a camera model used to project lidar point cloud
+        self.cam_params = self.get_calib_kitti(sequence).cuda()
+        self.camera_model = CameraModel(
+            focal_length=self.cam_params[:2], principal_point=self.cam_params[2:]
+        )
+
+    def load_map(self, path_to_map):
+        '''
+        Load map given in the path
+        '''
         full_map = o3.read_point_cloud(path_to_map)
         # convert map into torch tensor. this is (3,no of points) coordinates
         voxelized = torch.tensor(full_map.points, dtype=torch.float)
@@ -47,21 +65,8 @@ class RefineEstimate(object):
         )
         voxelized = voxelized.t()
         voxelized = voxelized.to("cuda")
-        # this containsthe intensities of each of this point
         vox_intensity = torch.tensor(full_map.colors, dtype=torch.float)[:, 0:1].t()
-        velo2cam2 = torch.from_numpy(self.kitti.calib.T_cam2_velo).float().to("cuda")
-        self.map = voxelized
-        self.velo2cam = velo2cam2
-        self.cam2velo = self.velo2cam.inverse()
-        self.map_intensity = vox_intensity
-        # load the models into a list
-        self.image_shape = (384, 1280)
-        self.models = self.load_models(weight_paths)
-        # initialize a camera model used to project lidar point cloud
-        self.cam_params = self.get_calib_kitti(sequence).cuda()
-        self.camera_model = CameraModel(
-            focal_length=self.cam_params[:2], principal_point=self.cam_params[2:]
-        )
+        return voxelized, vox_intensity
 
     def get_calib_kitti(self, sequence):
         if sequence == "00":
@@ -219,7 +224,10 @@ class RefineEstimate(object):
         RT_cumulative[:3, -1] = RT_cumulative[order, -1]
         return RT_cumulative, images
 
-    def update(self, current_transform, img_rgb):
+    def update(self, img_id, current_transform, img_rgb):
+        if img_id%300 == 0:
+            self.map, self.map_intensity = self.load_map(
+                self.path_to_map_folder+"/" + str(img_id % 300) + ".pcd")
         refinement, images = self.refine_pose_estimate(current_transform, img_rgb)
         # perform refinement
         cmr_global_transform_estimate = current_transform @ refinement

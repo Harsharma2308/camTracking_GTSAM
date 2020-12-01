@@ -25,7 +25,7 @@ if __name__ == "__main__":
     fg = FactorGraph(config, pose_3rd)
     
     # create a logger
-    logger = Logger(config["log_file"])
+    logger = Logger(config["log_dir"])
     # the main loop
     axes = [plt.subplot(3, 1, i + 1) for i in range(3)]
     for img_id in tqdm(range(2, config["length_traj"])):
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         current_pose, current_transform, delta_odom = vo_manager.update(img_id)
         # call cmrnet inference
         gps_pos, cmr_global_transform_estimate, images = cmr_manager.update(
-            current_transform, img_rgb
+            img_id, current_transform, img_rgb
         )
         logger.write_record(cmr_global_transform_estimate)
         vo_manager.refine_pose(cmr_global_transform_estimate)
