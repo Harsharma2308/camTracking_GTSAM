@@ -43,7 +43,7 @@ class PinholeCamera:
 
 
 class VisualOdometry:
-    def __init__(self, cam, annotations):
+    def __init__(self, cam, annotations, init_T):
         self.frame_stage = 0
         self.cam = cam
         self.new_frame = None
@@ -55,6 +55,8 @@ class VisualOdometry:
         self.px_ref = None
         self.px_cur = None
         self.focal = cam.fx
+        self.init_R = init_T[:3,:3]
+        self.init_t = init_T[:3,-1]
         self.pp = (cam.cx, cam.cy)
         self.trueX, self.trueY, self.trueZ = 0, 0, 0
         self.detector = cv2.FastFeatureDetector_create(
@@ -100,6 +102,10 @@ class VisualOdometry:
         _, self.cur_R, self.cur_t, mask = cv2.recoverPose(
             E, self.px_cur, self.px_ref, focal=self.focal, pp=self.pp
         )
+        
+        self.cur_t += (self.cur_R @ self.init_t).reshape(3,1)
+        self.cur_R = self.cur_R @ self.init_R
+        
         self.frame_stage = STAGE_DEFAULT_FRAME
         self.px_ref = self.px_cur
 
@@ -177,18 +183,18 @@ class VisualOdometry:
 
 
 class VisualOdometryManager(object):
-    def __init__(self, config):
+    def __init__(self, config, init_T):
         # create vo inference class
         self.dataset_image_dir = config["dataset_image_dir"]
         self.dataset_gt_poses_dir = config["dataset_gt_poses_dir"]
-
+        self.start_frame_num=config["start_frame_num"]
         cam = PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)
-        self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir + "00.txt")
+        self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir + "00.txt",init_T)
         self.traj_bg = np.zeros((600, 600, 3), dtype=np.uint8)
 
         self.length_traj = config["length_traj"]
-        self.trajectory = np.empty((self.length_traj, 3))
-        self.gt_trajectory = np.empty((self.length_traj, 3))
+        self.trajectory = np.empty((self.start_frame_num+self.length_traj, 3))
+        self.gt_trajectory = np.empty((self.start_frame_num+self.length_traj, 3))
 
     def initialize(self):
         self.update(0)
@@ -208,7 +214,7 @@ class VisualOdometryManager(object):
         current_transform = None
         current_pose = None
 
-        if img_id >= 2:
+        if img_id >= self.start_frame_num+2:
             self.trajectory[img_id] = self.vo.cur_t.flatten()
             self.gt_trajectory[img_id] = self.vo.trueX, self.vo.trueY, self.vo.trueZ
             current_transform = self.vo.get_current_transform()

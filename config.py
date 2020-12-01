@@ -13,8 +13,9 @@ config = {
     "sequence": "00",
     "dataset_image_dir": "/home/stars/Documents/sof/slam/project/datasets/kitti/sequences/",
     "dataset_gt_poses_dir": "/home/stars/Documents/sof/slam/project/datasets/kitti/poses/",
-    "length_traj": 4541,
+    "length_traj": 300,
     "dataset_path": "/home/stars/Documents/sof/slam/project/datasets/kitti/",
     "seq": "00",
-    "log_dir": "./Logs"
+    "log_dir": "./Logs",
+    "start_frame_num":1200
 }
