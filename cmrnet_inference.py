@@ -227,7 +227,7 @@ class RefineEstimate(object):
     def update(self, img_id, current_transform, img_rgb):
         if img_id%300 == 0:
             self.map, self.map_intensity = self.load_map(
-                self.path_to_map_folder+"/" + str(img_id % 300) + ".pcd")
+                self.path_to_map_folder+"/" + str(img_id // 300) + ".pcd")
         refinement, images = self.refine_pose_estimate(current_transform, img_rgb)
         # perform refinement
         cmr_global_transform_estimate = current_transform @ refinement

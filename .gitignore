@@ -20,3 +20,5 @@ cam_tracking/src/__pycache__/
 geometry2/
 cam_tracking/data/kitti_images.csv
 __pycache__
+config.py
+*.pcd

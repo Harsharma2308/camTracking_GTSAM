@@ -1,0 +1,204 @@
+[DEBUG][2020-11-30 22:18:28,644][main_ape.run():224]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:18:28,644][entry_points.launch():98]
+csv file 00.txt does not exist
+[DEBUG][2020-11-30 22:19:01,912][main_ape.run():224]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:19:01,913][entry_points.launch():98]
+csv file 00.txt does not exist
+[DEBUG][2020-11-30 22:20:14,633][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:20:14,688][file_interface.read_kitti_poses_file():163]
+Loaded 4541 poses from: 00.txt
+[ERROR][2020-11-30 22:20:14,690][entry_points.launch():98]
+csv file 11-30-2020,21:33:45.txt does not exist
+[DEBUG][2020-11-30 22:20:36,171][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:20:36,225][file_interface.read_kitti_poses_file():163]
+Loaded 4541 poses from: 00.txt
+[DEBUG][2020-11-30 22:20:36,230][file_interface.read_kitti_poses_file():163]
+Loaded 298 poses from: 11-30-2020,20:05:01.txt
+[DEBUG][2020-11-30 22:20:36,230][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:20:36,230][entry_points.launch():98]
+trajectories must have same number of poses
+[DEBUG][2020-11-30 22:20:52,323][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:20:52,378][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:20:52,383][file_interface.read_kitti_poses_file():163]
+Loaded 298 poses from: 11-30-2020,20:05:01.txt
+[DEBUG][2020-11-30 22:20:52,384][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:20:52,384][entry_points.launch():98]
+trajectories must have same number of poses
+[DEBUG][2020-11-30 22:21:47,087][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:21:47,142][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:21:47,147][file_interface.read_kitti_poses_file():163]
+Loaded 298 poses from: 11-30-2020,20:05:01.txt
+[DEBUG][2020-11-30 22:21:47,147][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:21:47,148][entry_points.launch():98]
+trajectories must have same number of poses
+[DEBUG][2020-11-30 22:23:05,862][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:23:05,915][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:23:05,920][file_interface.read_kitti_poses_file():163]
+Loaded 298 poses from: 11-30-2020,20:05:01.txt
+[DEBUG][2020-11-30 22:23:05,920][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[ERROR][2020-11-30 22:23:05,921][entry_points.launch():98]
+trajectories must have same number of poses
+[DEBUG][2020-11-30 22:23:33,385][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:23:33,438][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:23:33,503][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 11-30-2020,21:36:45.txt
+[DEBUG][2020-11-30 22:23:33,504][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:23:33,508][metrics.process_data():353]
+Compared 4539 absolute pose pairs.
+[DEBUG][2020-11-30 22:23:33,508][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-11-30 22:23:33,529][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-11-30 22:23:33,529][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	16.090087
+      mean	0.593348
+    median	0.277129
+       min	0.008475
+      rmse	1.616747
+       sse	11864.361673
+       std	1.503931
+
+[DEBUG][2020-11-30 22:23:34,333][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:23:34,333][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-11-30 22:26:21,685][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:21,738][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:26:21,804][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 11-30-2020,21:36:45.txt
+[DEBUG][2020-11-30 22:26:21,806][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:21,810][metrics.process_data():353]
+Compared 4539 absolute pose pairs.
+[DEBUG][2020-11-30 22:26:21,810][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-11-30 22:26:21,831][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-11-30 22:26:21,831][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	16.090087
+      mean	0.593348
+    median	0.277129
+       min	0.008475
+      rmse	1.616747
+       sse	11864.361673
+       std	1.503931
+
+[DEBUG][2020-11-30 22:26:22,476][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:22,476][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-11-30 22:26:48,423][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:48,476][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:26:48,542][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 11-30-2020,21:36:45.txt
+[DEBUG][2020-11-30 22:26:48,543][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:48,547][metrics.process_data():353]
+Compared 4539 absolute pose pairs.
+[DEBUG][2020-11-30 22:26:48,547][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-11-30 22:26:48,567][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-11-30 22:26:48,567][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	16.090087
+      mean	0.593348
+    median	0.277129
+       min	0.008475
+      rmse	1.616747
+       sse	11864.361673
+       std	1.503931
+
+[DEBUG][2020-11-30 22:26:49,199][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:26:49,199][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-11-30 22:27:10,884][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:27:10,938][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:27:11,004][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 11-30-2020,21:36:45.txt
+[DEBUG][2020-11-30 22:27:11,005][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:27:11,010][metrics.process_data():353]
+Compared 4539 absolute pose pairs.
+[DEBUG][2020-11-30 22:27:11,010][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-11-30 22:27:11,031][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-11-30 22:27:11,031][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	16.090087
+      mean	0.593348
+    median	0.277129
+       min	0.008475
+      rmse	1.616747
+       sse	11864.361673
+       std	1.503931
+
+[DEBUG][2020-11-30 22:27:11,683][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:27:11,683][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-11-30 22:29:40,552][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:29:40,605][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 00.txt
+[DEBUG][2020-11-30 22:29:40,670][file_interface.read_kitti_poses_file():163]
+Loaded 4539 poses from: 11-30-2020,21:36:45.txt
+[DEBUG][2020-11-30 22:29:40,672][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:29:40,676][metrics.process_data():353]
+Compared 4539 absolute pose pairs.
+[DEBUG][2020-11-30 22:29:40,676][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-11-30 22:29:40,697][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-11-30 22:29:40,697][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	16.090087
+      mean	0.593348
+    median	0.277129
+       min	0.008475
+      rmse	1.616747
+       sse	11864.361673
+       std	1.503931
+
+[DEBUG][2020-11-30 22:29:41,367][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-11-30 22:29:41,367][common_ape_rpe.plot_result():111]
+Plotting results... 

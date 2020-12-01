@@ -39,20 +39,20 @@ velodyne_folder = os.path.join(args.kitti_folder, 'sequences', sequence, 'velody
 pose_file = os.path.join('./data', f'kitti-{sequence}.csv')
 
 poses = []
-with open(pose_file, 'r') as f:
-    for x in f:
-        if x.startswith('timestamp'):
-            continue
-        x = x.split(',')
-        T = torch.tensor([float(x[1]), float(x[2]), float(x[3])])
-        R = torch.tensor([float(x[7]), float(x[4]), float(x[5]), float(x[6])])
-        poses.append(to_rotation_matrix(R, T))
+# with open(pose_file, 'r') as f:
+#     for x in f:
+#         if x.startswith('timestamp'):
+#             continue
+#         x = x.split(',')
+#         T = torch.tensor([float(x[1]), float(x[2]), float(x[3])])
+#         R = torch.tensor([float(x[7]), float(x[4]), float(x[5]), float(x[6])])
+#         poses.append(to_rotation_matrix(R, T))
 
-# kitti = pykitti.odometry("/home/arcot/Projects/SLAM_Project/dataset", "00")
-# poses = [torch.from_numpy(
-#             kitti.poses[i] @ kitti.calib.T_cam0_velo
-#         )
-#          for i in range(len(kitti.poses))]
+kitti = pykitti.odometry("./KITTI_ODOMETRY", "00")
+poses = [torch.from_numpy(
+            kitti.poses[i] @ kitti.calib.T_cam0_velo
+        )
+         for i in range(len(kitti.poses))]
 
 map_file = args.map
 first_frame = int(args.start)
@@ -93,6 +93,7 @@ if map_file is None:
 else:
     downpcd = o3.read_point_cloud(map_file)
 
+exit()
 voxelized = torch.tensor(downpcd.points, dtype=torch.float)
 voxelized = torch.cat((voxelized, torch.ones([voxelized.shape[0], 1], dtype=torch.float)), 1)
 voxelized = voxelized.t()
