@@ -1,4 +1,0 @@
-Help on built-in function symbol in module gtsam.gtsam:
-
-ssyymmbbooll(...) method of builtins.PyCapsule instance
-    symbol(chr: str, index: int) -> int
