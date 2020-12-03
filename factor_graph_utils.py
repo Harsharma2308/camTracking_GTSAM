@@ -30,8 +30,8 @@ def visual_ISAM2_plot(result):
     # axes.set_zlim3d(-40, 40)
     # plt.show()
     axes.view_init(elev=180,azim=90)
-    plt.savefig("traj.png")
-    pickle.dump(fig, open("fig.pickle","wb"))
+    plt.savefig("Figures/traj.png")
+    pickle.dump(fig, open("Figures/fig.pickle","wb"))
     plt.show()
 
 
