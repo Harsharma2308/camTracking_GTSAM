@@ -11,24 +11,29 @@ import matplotlib.pyplot as plt
 from logger import Logger
 
 if __name__ == "__main__":
+    # create a kitti reader
+    kitti = pykitti.odometry(config["dataset_path"], config["seq"])
+    #pose_init = kitti.poses[2]
+    pose_init = kitti.poses[config["start_frame_num"]]
     # create vo inference class
-    vo_manager = VisualOdometryManager(config)
+    vo_manager = VisualOdometryManager(config,pose_init)
     vo_manager.initialize()
     # create cmrnet inference class
     cmr_manager = RefineEstimate(config)
 
-    # create a kitti reader
-    kitti = pykitti.odometry(config["dataset_path"], config["seq"])
-    pose_3rd = kitti.poses[2]
+    
 
     # create factor graph object with a prior as the third pose
-    fg = FactorGraph(config, pose_3rd)
+    #TODO: channge this
+    # fg = FactorGraph(config, pose_init)
     
     # create a logger
     logger = Logger(config["log_dir"])
     # the main loop
     axes = [plt.subplot(3, 1, i + 1) for i in range(3)]
-    for img_id in tqdm(range(2, config["length_traj"])):
+    start_frame_id = config["start_frame_num"]+2
+    end_frame_id = config["start_frame_num"]+config["length_traj"]
+    for img_id in tqdm(range(start_frame_id,end_frame_id )):
         img_rgb = kitti.get_cam2(img_id)
         current_pose, current_transform, delta_odom = vo_manager.update(img_id)
         # call cmrnet inference
@@ -47,7 +52,7 @@ if __name__ == "__main__":
             "cur_pose_estimate": current_pose,
             "cur_pose_gps": gps_pos,
         }
-        fg.update(state)
+        # fg.update(state)
 
         # visualisation code
         if config["plot_vo"]:
@@ -59,5 +64,4 @@ if __name__ == "__main__":
     if config["visualize"]:
         fg.plot()
     # print(fg.current_estimate)
-    import ipdb; ipdb.set_trace()
     logger.close()

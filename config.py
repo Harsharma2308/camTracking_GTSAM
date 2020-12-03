@@ -7,7 +7,6 @@ config = {
     "initial_pose": np.array([0, 0, 0, 1, 0, 0, 0]),
     "visualize": True,
     "weight_paths": ["./CMRNet/checkpoints/iter1.tar", "./CMRNet/checkpoints/iter2.tar", "./CMRNet/checkpoints/iter3.tar"],
-    "path_to_map": "./Maps/map-00_0.1_0-300.pcd",
     "path_to_map_folder": "./Maps",
     "path_to_dataset": "./CMRNet/KITTI_ODOMETRY",
     "plot_vo": False,
@@ -17,5 +16,6 @@ config = {
     "length_traj": 50,
     "dataset_path": "/home/arcot/Projects/SLAM_Project/dataset",
     "seq": "00",
-    "log_dir": "./Logs"
+    "log_dir": "./Logs",
+    "start_frame_num":1200
 }

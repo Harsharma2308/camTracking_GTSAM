@@ -38,7 +38,8 @@ class RefineEstimate(object):
         # setup kitti manager
         self.kitti = pykitti.odometry(path_to_dataset, sequence)
         # load the downsampled map
-        self.map, self.map_intensity = self.load_map(self.path_to_map_folder+"/0.pcd")
+        start_map_num =config["start_frame_num"]//300
+        self.map, self.map_intensity = self.load_map(self.path_to_map_folder+"/{}.pcd".format(start_map_num))
         # load the transformations
         velo2cam2 = torch.from_numpy(self.kitti.calib.T_cam2_velo).float().to("cuda")
         self.velo2cam = velo2cam2
@@ -227,7 +228,7 @@ class RefineEstimate(object):
     def update(self, img_id, current_transform, img_rgb):
         if img_id%300 == 0:
             self.map, self.map_intensity = self.load_map(
-                self.path_to_map_folder+"/" + str(img_id % 300) + ".pcd")
+                self.path_to_map_folder+"/" + str(img_id // 300) + ".pcd")
         refinement, images = self.refine_pose_estimate(current_transform, img_rgb)
         # perform refinement
         cmr_global_transform_estimate = current_transform @ refinement
