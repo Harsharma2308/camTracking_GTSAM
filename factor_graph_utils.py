@@ -21,7 +21,7 @@ def visual_ISAM2_plot(result):
     i = 0
     while result.exists(X(i)):
         pose_i = result.atPose3(X(i))
-        gtsam_plot.plot_pose3(fignum, pose_i, 10)
+        gtsam_plot.plot_pose3(fignum, pose_i, 1)
         i += 1
 
     # draw

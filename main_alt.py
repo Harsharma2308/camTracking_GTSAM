@@ -56,7 +56,8 @@ if __name__ == "__main__":
                 plt.pause(0.2)
             vo_manager.plot(img_id)
 
-    if config["plot_vo"]:
+    if config["visualize"]:
         fg.plot()
     # print(fg.current_estimate)
+    import ipdb; ipdb.set_trace()
     logger.close()

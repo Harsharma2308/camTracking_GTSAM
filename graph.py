@@ -62,13 +62,19 @@ class FactorGraph(object):
 
     def add_gps(self, cur_pose):
         gps_pose = gtsam.Point3(*cur_pose)
-        self.graph.add(gtsam.GPSFactor(X(self.node_idx), gps_pose, self.gps_noise))
+        self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
         
     def optimize(self):
+        print(self.graph)
+        print("#########################")
+        print(self.initial_estimate)
+        # import ipdb; ipdb.set_trace()
         self.isam.update(self.graph, self.initial_estimate)
         self.current_estimate = self.isam.calculateEstimate()
-        self.graph.resize(0)
-        self.initial_estimate.clear()
+        print("###########################")
+        print(self.current_estimate)
+        # self.graph.resize(0)
+        self.initial_estimate.clear() # = self.current_estimate
         
     def update(self,state):
         delta_odom = state['delta_odom']
