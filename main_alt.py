@@ -47,8 +47,9 @@ if __name__ == "__main__":
         gps_pos, cmr_global_transform_estimate, images = cmr_manager.update(
             img_id, current_transform, img_rgb
         )
+        # gps_pos = current_transform[:3,-1]
         logger.write_record(cmr_global_transform_estimate)
-        vo_manager.refine_pose(cmr_global_transform_estimate)
+        # vo_manager.refine_pose(cmr_global_transform_estimate)
         print("##########################")
         print("vo_estimate", current_pose[:3])
         print("gps_estimate", gps_pos)
@@ -58,15 +59,19 @@ if __name__ == "__main__":
             "delta_odom": delta_odom,
             "cur_pose_estimate": current_pose,
             "cur_pose_gps": gps_pos,
+            "cmr_global_transform": cmr_global_transform_estimate
         }
+
+        # update factor graph
         fg.update(state)
+        vo_manager.refine_pose(fg.last_transform)
 
         # visualisation code
         if config["plot_vo"]:
             for i in range(len(images)):
                 axes[i].imshow(images[i])
-                plt.pause(0.2)
             vo_manager.plot(img_id)
+            plt.pause(0.5)
 
     if config["visualize"]:
         fg.plot()

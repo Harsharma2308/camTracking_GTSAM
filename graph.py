@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import gtsam.utils.plot as gtsam_plot
 from gtsam.utils.circlePose3 import *
 from factor_graph_utils import *
+from utils import matrix2posevec
 from config import config
 from scipy.spatial.transform import Rotation as R_scipy
 
@@ -40,30 +41,23 @@ class FactorGraph(object):
         self.initial_estimate.insert(X(self.node_idx), self.init_pose)
         self.current_estimate = None
 
-        self.count_index = 0
-        self.est_pose = []
-        self.pre_pose = None
+        self.last_transform = None
 
     def add_odom(self, delta_odom, cur_pose_estimate):
         '''
         params:
         delta_odom = 1*7 np.array(tx,ty,tz,w,x,y,z)
         '''
-        delta = gen_pose(delta_odom)#gtsam.Pose3(r = gtsam.Rot3.Quaternion(*delta_odom[3:]), t = delta_odom[:3])
+        delta = gen_pose(delta_odom)
         cur_pose = gen_pose(cur_pose_estimate)
         self.graph.add(gtsam.BetweenFactorPose3(X(self.node_idx), X(self.node_idx+1), delta, self.odom_noise))
-        # if self.count_index == 0:
         self.initial_estimate.insert(X(self.node_idx+1), cur_pose)
-        # else:
-        #     last_id = self.current_estimate.size()-1
-        #     self.initial_estimate.insert(X(self.node_idx+1), self.current_estimate.atPose3(X(last_id)).compose(delta))
-        
-        # self.count_index += 1
 
     def add_gps(self, cur_pose):
-        gps_pose = gtsam.Point3(*cur_pose)
-        self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
-        
+        # self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
+        gps_pose = gen_pose(cur_pose)
+        self.graph.add(gtsam.PriorFactorPose3(X(self.node_idx+1), gps_pose, self.prior_noise))
+
     def optimize(self):
         # print(self.graph)
         # print("#########################")
@@ -81,10 +75,19 @@ class FactorGraph(object):
         cur_pose_estimate = state['cur_pose_estimate']
         cur_pose_gps = state['cur_pose_gps']
         self.add_odom(delta_odom,cur_pose_estimate)
-        self.add_gps(cur_pose_gps)
+        # self.add_gps(cur_pose_gps)
+        #######################################################
+        cmr_pose = state["cmr_global_transform"]
+        cmr_pose_vec = matrix2posevec(cmr_pose)
+        cmr_pose_vec[3:] = np.roll(cmr_pose_vec[3:],1)
+        self.add_gps(cmr_pose_vec)
+        #######################################################
         # if(self.visualize and self.initial_estimate is not None):
         #     self.plot()
         self.optimize()
+        last_pose3 = self.current_estimate.atPose3(X(self.node_idx+1))
+        self.last_transform = last_pose3.matrix()[:3,:]
+        print("fg estimate:",self.last_transform[:3,-1].flatten())
         self.node_idx += 1
     
     def plot(self):

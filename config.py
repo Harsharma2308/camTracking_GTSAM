@@ -3,7 +3,7 @@ import numpy as np
 config = {
     "odom_noise": np.array([1, 1, 1, 0.5, 0.5, 0.5]),
     "prior_noise": np.array([0.3, 0.3, 0.3, 0.1, 0.1, 0.1]),
-    "gps_noise": np.array([0.1, 0.1, 0.1]),
+    "gps_noise": np.array([1, 1, 1]),
     "initial_pose": np.array([0, 0, 0, 1, 0, 0, 0]),
     "visualize": False,
     "weight_paths": ["./CMRNet/checkpoints/iter1.tar", "./CMRNet/checkpoints/iter2.tar", "./CMRNet/checkpoints/iter3.tar"],
@@ -13,7 +13,7 @@ config = {
     "sequence": "00",
     "dataset_image_dir": "/home/arcot/Projects/SLAM_Project/dataset/sequences/",
     "dataset_gt_poses_dir": "/home/arcot/Projects/SLAM_Project/dataset/poses/",
-    "length_traj": 50,
+    "length_traj": 4541,
     "dataset_path": "/home/arcot/Projects/SLAM_Project/dataset",
     "seq": "00",
     "log_dir": "./Logs",
