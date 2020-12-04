@@ -65,8 +65,8 @@ class VisualOdometry:
         with open(annotations) as f:
             self.annotations = f.readlines()
 
-    def getAbsoluteScale(self, frame_id):  # specialized for KITTI odometry dataset
-        ss = self.annotations[frame_id - 1].strip().split()
+    def getAbsoluteScale(self, frame_id,prev_frame_id):  # specialized for KITTI odometry dataset
+        ss = self.annotations[prev_frame_id].strip().split()
         x_prev = float(ss[3])
         y_prev = float(ss[7])
         z_prev = float(ss[11])
@@ -125,7 +125,7 @@ class VisualOdometry:
         _, R, t, mask = cv2.recoverPose(
             E, self.px_cur, self.px_ref, focal=self.focal, pp=self.pp
         )
-        absolute_scale = self.getAbsoluteScale(frame_id)
+        absolute_scale = self.getAbsoluteScale(frame_id,frame_id - 1)
 
         prev_R = self.cur_R
         prev_t = self.cur_t
@@ -163,6 +163,47 @@ class VisualOdometry:
             self.processFirstFrame()
         self.last_frame = self.new_frame
 
+    def get_skip_delta_pose(self,new_frame,prev_frame,frame_id,prev_frame_id):
+        #Last nth frame
+        px_ref = self.detector.detect(prev_frame)
+        px_ref = np.array([x.pt for x in px_ref], dtype=np.float32)
+        
+        #New frame
+        px_ref, px_cur = featureTracking(
+            prev_frame, new_frame, px_ref
+        )
+        E, mask = cv2.findEssentialMat(
+            px_cur,
+            px_ref,
+            focal=self.focal,
+            pp=self.pp,
+            method=cv2.RANSAC,
+            prob=0.999,
+            threshold=1.0,
+        )
+        _, R, t, mask = cv2.recoverPose(
+            E, px_cur, px_ref, focal=self.focal, pp=self.pp
+        )
+
+
+        absolute_scale = self.getAbsoluteScale(frame_id,prev_frame_id)
+
+        if absolute_scale > 0.1:
+            t *= absolute_scale
+            
+        if px_ref.shape[0] < kMinNumFeature:
+            px_cur = self.detector.detect(new_frame)
+            px_cur = np.array([x.pt for x in px_cur], dtype=np.float32)
+        
+        transform_mat = np.eye(4)
+        transform_mat[:3,:3]=R
+        transform_mat[:3,-1]=t.flatten()
+        
+        delta_odom = matrix2posevec(transform_mat)
+        # quat stored as qw,qx,qy,qz
+        delta_odom[3:] = np.roll(delta_odom[3:], 1)
+        return delta_odom
+
     def get_current_pose(self):
         if self.cur_t is None:
             return None
@@ -192,9 +233,13 @@ class VisualOdometryManager(object):
         self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir + "00.txt",init_T)
         self.traj_bg = np.zeros((600, 600, 3), dtype=np.uint8)
 
+
         self.length_traj = config["length_traj"]
         self.trajectory = np.empty((self.start_frame_num+self.length_traj, 3))
         self.gt_trajectory = np.empty((self.start_frame_num+self.length_traj, 3))
+
+        ###Skip odometry variables
+        self.prev_skip_pose=None
 
     def initialize(self):
         self.update(0)
@@ -204,9 +249,20 @@ class VisualOdometryManager(object):
         self.vo.cur_t = gps_pose_transformation[:3, -1].reshape(3,1)
         self.vo.cur_R = gps_pose_transformation[:3, :3]
 
+    
+    def get_skip_delta_pose(self,frame_id,prev_frame_id):
+        new_frame = cv2.imread(
+            self.dataset_image_dir + "00/image_2/" + str(frame_id).zfill(6) + ".png", 0
+        )
+        prev_frame = cv2.imread(
+            self.dataset_image_dir + "00/image_2/" + str(prev_frame_id).zfill(6) + ".png", 0
+        )
+        return self.vo.get_skip_delta_pose(new_frame,prev_frame,frame_id,prev_frame_id)
+
+
     def update(self, img_id):
         img = cv2.imread(
-            self.dataset_image_dir + "00/image_0/" + str(img_id).zfill(6) + ".png", 0
+            self.dataset_image_dir + "00/image_2/" + str(img_id).zfill(6) + ".png", 0
         )
 
         self.vo.update(img, img_id)
@@ -219,7 +275,6 @@ class VisualOdometryManager(object):
             self.gt_trajectory[img_id] = self.vo.trueX, self.vo.trueY, self.vo.trueZ
             current_transform = self.vo.get_current_transform()
             current_pose = self.vo.get_current_pose()
-
         return current_pose, current_transform, self.vo.delta_odom
 
     def plot(self, img_id):

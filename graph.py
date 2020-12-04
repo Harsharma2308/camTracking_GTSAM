@@ -24,16 +24,20 @@ class FactorGraph(object):
         self.node_idx = 0
 
         self.odom_noise = gtsam.noiseModel.Diagonal.Sigmas(config["odom_noise"])
+        self.skip_noise = gtsam.noiseModel.Diagonal.Sigmas(config["skip_noise"])
         self.prior_noise = gtsam.noiseModel.Diagonal.Sigmas(config["prior_noise"])
         self.gps_noise = gtsam.noiseModel.Isotropic.Sigmas(config["gps_noise"])
-        self.visualize=config["visualize"]
+        self.skip_num = config["skip_num"]
+
+
+        # self.visualize=config["visualize"]
         self.graph = gtsam.NonlinearFactorGraph()
         self.initial_estimate = gtsam.Values()
         self.init_pose = gen_pose(init_pose) #gtsam.Pose3(gtsam.Rot3.Rodrigues(*init_pose[3:]), gtsam.Point3(*init_pose[:3]))#gen_pose([0,0,0])
 
         self.parameters = gtsam.ISAM2Params()
         self.parameters.setRelinearizeThreshold(0.01)
-        self.parameters.setRelinearizeSkip(1)
+        self.parameters.setRelinearizeSkip(10)
         self.isam = gtsam.ISAM2(self.parameters)
 
         #! Add a prior on pose x0
@@ -43,6 +47,15 @@ class FactorGraph(object):
 
         self.last_transform = None
 
+    def add_skip_odom(self, delta_odom, prev_node_idx, cur_node_idx):
+        '''
+        params:
+        delta_odom = 1*7 np.array(tx,ty,tz,w,x,y,z)
+        '''
+        delta = gen_pose(delta_odom)
+        self.graph.add(gtsam.BetweenFactorPose3(X(prev_node_idx), X(cur_node_idx), delta, self.skip_noise))
+
+    
     def add_odom(self, delta_odom, cur_pose_estimate):
         '''
         params:
@@ -72,9 +85,17 @@ class FactorGraph(object):
         
     def update(self,state):
         delta_odom = state['delta_odom']
+        delta_skip_odom = state['delta_skip_odom']
         cur_pose_estimate = state['cur_pose_estimate']
         cur_pose_gps = state['cur_pose_gps']
+        
+        #######################################################
         self.add_odom(delta_odom,cur_pose_estimate)
+        
+        #######################################################
+        if(delta_skip_odom is not None):
+            self.add_skip_odom(delta_skip_odom,self.node_idx+1-self.skip_num,self.node_idx+1)
+        
         # self.add_gps(cur_pose_gps)
         #######################################################
         cmr_pose = state["cmr_global_transform"]

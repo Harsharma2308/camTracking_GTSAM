@@ -15,7 +15,7 @@ if __name__ == "__main__":
     kitti = pykitti.odometry(config["dataset_path"], config["seq"])
     vo_pose_init = kitti.poses[config["start_frame_num"]]
     fg_pose_init = kitti.poses[config["start_frame_num"]+1]
-
+    skip_num = config["skip_num"]
     # create vo inference class
     vo_manager = VisualOdometryManager(config,vo_pose_init)
     vo_manager.initialize()
@@ -41,8 +41,17 @@ if __name__ == "__main__":
 
     # the main loop
     for img_id in tqdm(range(start_frame_id,end_frame_id )):
+        delta_skip_odom=None
         img_rgb = kitti.get_cam2(img_id)
+        
         current_pose, current_transform, delta_odom = vo_manager.update(img_id)
+        if((img_id-config["start_frame_num"]-1)%skip_num==0):
+            prev_frame_id = img_id - skip_num
+            new_frame_id = img_id
+            # new_frame = kitti.get_cam0(img_id)
+            # prev_frame = kitti.get_cam0(img_id-skip_num)
+            delta_skip_odom = vo_manager.get_skip_delta_pose(new_frame_id,prev_frame_id)
+            print("Skipping frames!", delta_skip_odom)
         # call cmrnet inference
         gps_pos, cmr_global_transform_estimate, images = cmr_manager.update(
             img_id, current_transform, img_rgb
@@ -59,7 +68,8 @@ if __name__ == "__main__":
             "delta_odom": delta_odom,
             "cur_pose_estimate": current_pose,
             "cur_pose_gps": gps_pos,
-            "cmr_global_transform": cmr_global_transform_estimate
+            "cmr_global_transform": cmr_global_transform_estimate,
+            "delta_skip_odom":delta_skip_odom 
         }
 
         # update factor graph
@@ -68,12 +78,14 @@ if __name__ == "__main__":
 
         # visualisation code
         if config["plot_vo"]:
+            vo_manager.plot(img_id)
+
+        if config["plot_cmr"]:
             for i in range(len(images)):
                 axes[i].imshow(images[i])
-            vo_manager.plot(img_id)
             plt.pause(0.5)
 
-    if config["visualize"]:
+    if config["plot_fg"]:
         fg.plot()
     # print(fg.current_estimate)
 
