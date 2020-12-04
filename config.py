@@ -18,5 +18,5 @@ config = {
     "seq": "00",
     "log_dir": "./Logs",
     "start_frame_num":0,
-    "gt_file": "./Logs/00.txt"
+    "gt_file": "./Poses/00.txt"
 }
