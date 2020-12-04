@@ -65,14 +65,14 @@ class FactorGraph(object):
         self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
         
     def optimize(self):
-        print(self.graph)
-        print("#########################")
-        print(self.initial_estimate)
+        # print(self.graph)
+        # print("#########################")
+        # print(self.initial_estimate)
         # import ipdb; ipdb.set_trace()
         self.isam.update(self.graph, self.initial_estimate)
         self.current_estimate = self.isam.calculateEstimate()
-        print("###########################")
-        print(self.current_estimate)
+        # print("###########################")
+        # print(self.current_estimate)
         # self.graph.resize(0)
         self.initial_estimate.clear() # = self.current_estimate
         

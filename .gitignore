@@ -25,3 +25,5 @@ config.py
 Logs/
 *.pickle
 *.png
+Logs/*
+Logs/*/*
