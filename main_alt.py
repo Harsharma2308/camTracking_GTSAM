@@ -95,7 +95,7 @@ if __name__ == "__main__":
         }
 
         # update factor graph
-        fg.update(state)
+        fg.update(state, resize = (img_id%100 == 0))
         vo_manager.refine_pose(fg.last_transform)
 
         # visualisation code
@@ -107,6 +107,7 @@ if __name__ == "__main__":
     # print(fg.current_estimate)
 
     # wrte the factor graph into log and close
+    import ipdb; ipdb.set_trace()
     fg_logger.write_factor_graph(fg.current_estimate)
     # print(fg.graph)
     logger.close()

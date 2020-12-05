@@ -73,7 +73,7 @@ class FactorGraph(object):
         gps_pose = gen_pose(cur_pose)
         self.graph.add(gtsam.PriorFactorPose3(X(self.node_idx+1), gps_pose, self.gps_pose_noise))
 
-    def optimize(self):
+    def optimize(self, resize):
         # print(self.graph)
         # print("#########################")
         # print(self.initial_estimate)
@@ -82,10 +82,12 @@ class FactorGraph(object):
         self.current_estimate = self.isam.calculateEstimate()
         # print("###########################")
         # print(self.current_estimate)
-        # self.graph.resize(0)
+        if resize:
+            print("Resizing Graph")
+            self.graph.resize(0)
         self.initial_estimate.clear() # = self.current_estimate
         
-    def update(self,state):
+    def update(self,state, resize = False):
         delta_odom = state['delta_odom']
         delta_skip_odom = state['delta_skip_odom']
         delta_skip_odom_other = state['delta_skip_odom_other']
@@ -110,7 +112,7 @@ class FactorGraph(object):
         #######################################################
         # if(self.visualize and self.initial_estimate is not None):
         #     self.plot()
-        self.optimize()
+        self.optimize(resize)
         last_pose3 = self.current_estimate.atPose3(X(self.node_idx+1))
         self.last_transform = last_pose3.matrix()[:3,:]
         print("fg estimate:",self.last_transform[:3,-1].flatten())
