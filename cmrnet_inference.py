@@ -32,9 +32,9 @@ class RefineEstimate(object):
 
     def __init__(self, config):
         path_to_dataset = config["path_to_dataset"]
-        self.path_to_map_folder = config["path_to_map_folder"]
-        weight_paths = config["weight_paths"]
         sequence = config["sequence"]
+        self.path_to_map_folder = config["path_to_map_folder"] + "/" + sequence
+        weight_paths = config["weight_paths"]
         # setup kitti manager
         self.kitti = pykitti.odometry(path_to_dataset, sequence)
         # load the downsampled map
