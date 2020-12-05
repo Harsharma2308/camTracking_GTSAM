@@ -9,6 +9,8 @@ from visual_odometry import VisualOdometryManager
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from logger import Logger
+from factor_graph_utils import X
+from utils import matrix2posevec
 
 if __name__ == "__main__":
     # create a kitti reader
@@ -41,17 +43,30 @@ if __name__ == "__main__":
 
     # the main loop
     for img_id in tqdm(range(start_frame_id,end_frame_id )):
-        delta_skip_odom=None
+        delta_skip_odom=delta_skip_odom_other=None
         img_rgb = kitti.get_cam2(img_id)
         
         current_pose, current_transform, delta_odom = vo_manager.update(img_id)
         if((img_id-config["start_frame_num"]-1)%skip_num==0):
             prev_frame_id = img_id - skip_num
+            other_prev_frame_id = img_id - skip_num + 2
             new_frame_id = img_id
             # new_frame = kitti.get_cam0(img_id)
             # prev_frame = kitti.get_cam0(img_id-skip_num)
-            delta_skip_odom = vo_manager.get_skip_delta_pose(new_frame_id,prev_frame_id)
+            # delta_skip_odom = vo_manager.get_skip_delta_pose(new_frame_id,prev_frame_id)
+            ##############################################################################
+            # import ipdb; ipdb.set_trace()
+            fg_idx = prev_frame_id - start_frame_id + 1
+            prev_pose3 = fg.current_estimate.atPose3(X(fg_idx))
+            cur_img = kitti.get_cam2(new_frame_id)
+            delta_skip_transform, _ = cmr_manager.refine_pose_estimate(prev_pose3.matrix(), cur_img)
+            # delta_skip_transform = np.linalg.inv(delta_skip_transform)
+            delta_skip_odom = matrix2posevec(delta_skip_transform)
+            delta_skip_odom[3:] = np.roll(delta_skip_odom[3:], 1)
+            ##############################################################################
+            delta_skip_odom_other = vo_manager.get_skip_delta_pose(new_frame_id,other_prev_frame_id)
             print("Skipping frames!", delta_skip_odom)
+            
         # call cmrnet inference
         gps_pos, cmr_global_transform_estimate, images = cmr_manager.update(
             img_id, current_transform, img_rgb
@@ -69,7 +84,8 @@ if __name__ == "__main__":
             "cur_pose_estimate": current_pose,
             "cur_pose_gps": gps_pos,
             "cmr_global_transform": cmr_global_transform_estimate,
-            "delta_skip_odom":delta_skip_odom 
+            "delta_skip_odom":delta_skip_odom ,
+            "delta_skip_odom_other":delta_skip_odom_other 
         }
 
         # update factor graph
@@ -91,5 +107,6 @@ if __name__ == "__main__":
 
     # wrte the factor graph into log and close
     fg_logger.write_factor_graph(fg.current_estimate)
+    # print(fg.graph)
     logger.close()
     fg_logger.close()

@@ -26,6 +26,7 @@ class FactorGraph(object):
         self.odom_noise = gtsam.noiseModel.Diagonal.Sigmas(config["odom_noise"])
         self.skip_noise = gtsam.noiseModel.Diagonal.Sigmas(config["skip_noise"])
         self.prior_noise = gtsam.noiseModel.Diagonal.Sigmas(config["prior_noise"])
+        self.gps_pose_noise = gtsam.noiseModel.Diagonal.Sigmas(config["gps_pose_noise"])
         self.gps_noise = gtsam.noiseModel.Isotropic.Sigmas(config["gps_noise"])
         self.skip_num = config["skip_num"]
 
@@ -69,7 +70,7 @@ class FactorGraph(object):
     def add_gps(self, cur_pose):
         # self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
         gps_pose = gen_pose(cur_pose)
-        self.graph.add(gtsam.PriorFactorPose3(X(self.node_idx+1), gps_pose, self.prior_noise))
+        self.graph.add(gtsam.PriorFactorPose3(X(self.node_idx+1), gps_pose, self.gps_pose_noise))
 
     def optimize(self):
         # print(self.graph)
@@ -86,6 +87,7 @@ class FactorGraph(object):
     def update(self,state):
         delta_odom = state['delta_odom']
         delta_skip_odom = state['delta_skip_odom']
+        delta_skip_odom_other = state['delta_skip_odom_other']
         cur_pose_estimate = state['cur_pose_estimate']
         cur_pose_gps = state['cur_pose_gps']
         
@@ -93,8 +95,9 @@ class FactorGraph(object):
         self.add_odom(delta_odom,cur_pose_estimate)
         
         #######################################################
-        if(delta_skip_odom is not None):
+        if(delta_skip_odom is not None and delta_skip_odom_other is not None):
             self.add_skip_odom(delta_skip_odom,self.node_idx+1-self.skip_num,self.node_idx+1)
+            self.add_skip_odom(delta_skip_odom_other,self.node_idx+1-self.skip_num+2,self.node_idx+1)
         
         # self.add_gps(cur_pose_gps)
         #######################################################
