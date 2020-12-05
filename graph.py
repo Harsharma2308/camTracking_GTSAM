@@ -68,6 +68,7 @@ class FactorGraph(object):
         self.initial_estimate.insert(X(self.node_idx+1), cur_pose)
 
     def add_gps(self, cur_pose):
+        print("Adding GPS factor at",self.node_idx+1)
         # self.graph.add(gtsam.GPSFactor(X(self.node_idx+1), gps_pose, self.gps_noise))
         gps_pose = gen_pose(cur_pose)
         self.graph.add(gtsam.PriorFactorPose3(X(self.node_idx+1), gps_pose, self.gps_pose_noise))
@@ -102,9 +103,10 @@ class FactorGraph(object):
         # self.add_gps(cur_pose_gps)
         #######################################################
         cmr_pose = state["cmr_global_transform"]
-        cmr_pose_vec = matrix2posevec(cmr_pose)
-        cmr_pose_vec[3:] = np.roll(cmr_pose_vec[3:],1)
-        self.add_gps(cmr_pose_vec)
+        if cmr_pose is not None:
+            cmr_pose_vec = matrix2posevec(cmr_pose)
+            cmr_pose_vec[3:] = np.roll(cmr_pose_vec[3:],1)
+            self.add_gps(cmr_pose_vec)
         #######################################################
         # if(self.visualize and self.initial_estimate is not None):
         #     self.plot()

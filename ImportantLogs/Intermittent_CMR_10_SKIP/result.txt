@@ -1,0 +1,90 @@
+[DEBUG][2020-12-05 02:53:44,599][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:53:44,615][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: ./Logs/12-05-2020,02:22:48/gt.txt
+[DEBUG][2020-12-05 02:53:44,636][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: ./Logs/12-05-2020,02:22:48/log.txt
+[DEBUG][2020-12-05 02:53:44,637][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:53:44,638][metrics.process_data():353]
+Compared 1499 absolute pose pairs.
+[DEBUG][2020-12-05 02:53:44,638][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-12-05 02:53:44,645][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-12-05 02:53:44,645][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	1.026858
+      mean	0.294671
+    median	0.246661
+       min	0.014014
+      rmse	0.354835
+       sse	188.735617
+       std	0.197679
+
+[DEBUG][2020-12-05 02:53:45,561][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:53:45,561][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-12-05 02:56:14,047][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:56:14,064][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: ./Logs/12-05-2020,02:22:48/gt.txt
+[DEBUG][2020-12-05 02:56:14,085][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: ./Logs/12-05-2020,02:22:48/factor_log.txt
+[DEBUG][2020-12-05 02:56:14,086][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:56:14,088][metrics.process_data():353]
+Compared 1499 absolute pose pairs.
+[DEBUG][2020-12-05 02:56:14,088][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-12-05 02:56:14,093][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-12-05 02:56:14,094][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	1.861261
+      mean	0.371791
+    median	0.300796
+       min	0.000047
+      rmse	0.453231
+       sse	307.921663
+       std	0.259209
+
+[DEBUG][2020-12-05 02:56:14,891][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:56:14,891][common_ape_rpe.plot_result():111]
+Plotting results... 
+[DEBUG][2020-12-05 02:58:45,146][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:58:45,162][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: gt.txt
+[DEBUG][2020-12-05 02:58:45,185][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: factor_log.txt
+[DEBUG][2020-12-05 02:58:45,186][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:58:45,188][metrics.process_data():353]
+Compared 1499 absolute pose pairs.
+[DEBUG][2020-12-05 02:58:45,188][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-12-05 02:58:45,194][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-12-05 02:58:45,194][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	1.861261
+      mean	0.371791
+    median	0.300796
+       min	0.000047
+      rmse	0.453231
+       sse	307.921663
+       std	0.259209
+
+[DEBUG][2020-12-05 02:58:45,903][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 02:58:45,903][common_ape_rpe.plot_result():111]
+Plotting results... 
