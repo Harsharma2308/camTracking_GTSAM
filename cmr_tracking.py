@@ -31,6 +31,7 @@ if __name__ == "__main__":
     end_frame_id = config["start_frame_num"]+config["length_traj"]
     current_transform = kitti.poses[start_frame_id-1]
     logger.write_record(current_transform)
+    print(current_transform)
     # the main loop
     try:
         for img_id in tqdm(range(start_frame_id, end_frame_id)):
