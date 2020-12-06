@@ -1,0 +1,30 @@
+[DEBUG][2020-12-05 17:30:58,552][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:30:58,604][file_interface.read_kitti_poses_file():163]
+Loaded 4530 poses from: ./Logs/12-05-2020,17:28:07/gt.txt
+[DEBUG][2020-12-05 17:30:58,665][file_interface.read_kitti_poses_file():163]
+Loaded 4530 poses from: ./Logs/12-05-2020,17:28:07/log.txt
+[DEBUG][2020-12-05 17:30:58,666][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:30:58,671][metrics.process_data():353]
+Compared 4530 absolute pose pairs.
+[DEBUG][2020-12-05 17:30:58,671][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-12-05 17:30:58,689][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-12-05 17:30:58,689][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	609.154334
+      mean	234.563275
+    median	205.871745
+       min	0.145157
+      rmse	298.302094
+       sse	403098151.249780
+       std	184.293812
+
+[DEBUG][2020-12-05 17:30:59,266][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:30:59,266][common_ape_rpe.plot_result():111]
+Plotting results... 

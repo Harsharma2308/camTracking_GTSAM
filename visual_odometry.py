@@ -229,8 +229,9 @@ class VisualOdometryManager(object):
         self.dataset_image_dir = config["dataset_image_dir"]
         self.dataset_gt_poses_dir = config["dataset_gt_poses_dir"]
         self.start_frame_num=config["start_frame_num"]
-        cam = PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)
-        self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir + "00.txt",init_T)
+        self.sequence = config["seq"]
+        cam = self.get_camera(self.sequence)
+        self.vo = VisualOdometry(cam, self.dataset_gt_poses_dir + self.sequence + ".txt",init_T)
         self.traj_bg = np.zeros((600, 600, 3), dtype=np.uint8)
 
 
@@ -249,20 +250,29 @@ class VisualOdometryManager(object):
         self.vo.cur_t = gps_pose_transformation[:3, -1].reshape(3,1)
         self.vo.cur_R = gps_pose_transformation[:3, :3]
 
-    
+    def get_camera(self, sequence):
+        if sequence in ["00","01","02"]:
+            return PinholeCamera(1241.0, 376.0, 718.8560, 718.8560, 607.1928, 185.2157)
+        elif sequence == "03":
+             return PinholeCamera(1242.0, 375.0, 721.5377, 721.5377, 609.5593, 172.854)
+        elif sequence in ["05", "06", "07", "08", "09"]:
+            raise TypeError("Sequence Not Available")
+        else:
+            raise TypeError("Sequence Not Available")
+
     def get_skip_delta_pose(self,frame_id,prev_frame_id):
         new_frame = cv2.imread(
-            self.dataset_image_dir + "00/image_2/" + str(frame_id).zfill(6) + ".png", 0
+            self.dataset_image_dir + self.sequence + "/image_2/" + str(frame_id).zfill(6) + ".png", 0
         )
         prev_frame = cv2.imread(
-            self.dataset_image_dir + "00/image_2/" + str(prev_frame_id).zfill(6) + ".png", 0
+            self.dataset_image_dir + self.sequence + "/image_2/" + str(prev_frame_id).zfill(6) + ".png", 0
         )
         return self.vo.get_skip_delta_pose(new_frame,prev_frame,frame_id,prev_frame_id)
 
 
     def update(self, img_id):
         img = cv2.imread(
-            self.dataset_image_dir + "00/image_2/" + str(img_id).zfill(6) + ".png", 0
+            self.dataset_image_dir + self.sequence + "/image_2/" + str(img_id).zfill(6) + ".png", 0
         )
 
         self.vo.update(img, img_id)
@@ -297,7 +307,7 @@ class VisualOdometryManager(object):
         )
         cv2.circle(self.traj_bg, (true_x, true_y), 1, (0, 0, 255), 2)
         cv2.rectangle(self.traj_bg, (10, 20), (600, 60), (0, 0, 0), -1)
-        text = "Coordinates: x=%2fm y=%2fm z=%2fm" % (x, y, z)
+        text = "Coordinates: x=%2fm y=%2fm z=%2fm, Imgage ID=%f" % (x, y, z, img_id)
         cv2.putText(
             self.traj_bg,
             text,
@@ -309,7 +319,6 @@ class VisualOdometryManager(object):
             8,
         )
 
-        cv2.imshow("Trajectory", self.traj_bg)
-
+        cv2.imshow("Trajectory".format(img_id), self.traj_bg)
         cv2.waitKey(1)
 

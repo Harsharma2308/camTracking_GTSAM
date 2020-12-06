@@ -88,3 +88,33 @@ APE w.r.t. translation part (m)
 --------------------------------------------------------------------------------
 [DEBUG][2020-12-05 02:58:45,903][common_ape_rpe.plot_result():111]
 Plotting results... 
+[DEBUG][2020-12-05 17:40:28,873][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:40:28,890][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: gt.txt
+[DEBUG][2020-12-05 17:40:28,912][file_interface.read_kitti_poses_file():163]
+Loaded 1499 poses from: log.txt
+[DEBUG][2020-12-05 17:40:28,913][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:40:28,914][metrics.process_data():353]
+Compared 1499 absolute pose pairs.
+[DEBUG][2020-12-05 17:40:28,915][metrics.process_data():355]
+Calculating APE for translation part pose relation...
+[DEBUG][2020-12-05 17:40:28,921][main_ape.ape():202]
+--------------------------------------------------------------------------------
+[INFO][2020-12-05 17:40:28,921][main_ape.ape():203]
+APE w.r.t. translation part (m)
+(not aligned)
+
+       max	1.026858
+      mean	0.294671
+    median	0.246661
+       min	0.014014
+      rmse	0.354835
+       sse	188.735617
+       std	0.197679
+
+[DEBUG][2020-12-05 17:40:29,459][common_ape_rpe.plot_result():110]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 17:40:29,459][common_ape_rpe.plot_result():111]
+Plotting results... 

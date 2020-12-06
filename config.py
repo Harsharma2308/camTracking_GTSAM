@@ -12,15 +12,14 @@ config = {
     "path_to_map_folder": "./Maps",
     "path_to_dataset": "./CMRNet/KITTI_ODOMETRY",
     "plot_vo": True,
-    "plot_cmr": False,
+    "plot_cmr": True,
     "plot_fg": False,
-    "sequence": "00",
     "dataset_image_dir": "/home/arcot/Projects/SLAM_Project/dataset/sequences/",
     "dataset_gt_poses_dir": "/home/arcot/Projects/SLAM_Project/dataset/poses/",
-    "length_traj": 4230,
+    "length_traj": 100,
     "dataset_path": "/home/arcot/Projects/SLAM_Project/dataset",
-    "seq": "00",
+    "seq": "02",
     "log_dir": "./Logs",
     "start_frame_num":0,
-    "gt_file": "./Poses/00.txt"
+    "gt_dir": "./Poses"
 }

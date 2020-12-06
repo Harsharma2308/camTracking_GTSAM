@@ -18,7 +18,7 @@ class Logger(object):
         # frame ids and gt_file paths
         self.start = config["start_frame_num"]+1
         self.end = config["length_traj"] + self.start - 1
-        self.gt_file = config["gt_file"]
+        self.gt_file = config["gt_dir"] + "/" + config["seq"] + ".txt"
 
     def write_record(self, transform):
         transform_flattened = transform[:3,:].flatten()

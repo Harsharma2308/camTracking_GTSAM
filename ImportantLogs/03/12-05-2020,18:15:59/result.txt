@@ -1,0 +1,10 @@
+[DEBUG][2020-12-05 18:16:15,146][main_ape.run():224]
+--------------------------------------------------------------------------------
+[DEBUG][2020-12-05 18:16:15,156][file_interface.read_kitti_poses_file():163]
+Loaded 800 poses from: ./Logs/12-05-2020,18:15:59/gt.txt
+[DEBUG][2020-12-05 18:16:15,156][file_interface.read_kitti_poses_file():163]
+Loaded 0 poses from: ./Logs/12-05-2020,18:15:59/factor_log.txt
+[DEBUG][2020-12-05 18:16:15,156][main_ape.ape():180]
+--------------------------------------------------------------------------------
+[ERROR][2020-12-05 18:16:15,156][entry_points.launch():98]
+trajectories must have same number of poses

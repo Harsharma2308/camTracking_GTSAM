@@ -32,7 +32,7 @@ class RefineEstimate(object):
 
     def __init__(self, config):
         path_to_dataset = config["path_to_dataset"]
-        sequence = config["sequence"]
+        sequence = config["seq"]
         self.path_to_map_folder = config["path_to_map_folder"] + "/" + sequence
         weight_paths = config["weight_paths"]
         # setup kitti manager
@@ -70,7 +70,7 @@ class RefineEstimate(object):
         return voxelized, vox_intensity
 
     def get_calib_kitti(self, sequence):
-        if sequence == "00":
+        if sequence in ["00", "01", "02"]:
             return torch.tensor([718.856, 718.856, 607.1928, 185.2157])
         elif sequence == "03":
             return torch.tensor([721.5377, 721.5377, 609.5593, 172.854])
