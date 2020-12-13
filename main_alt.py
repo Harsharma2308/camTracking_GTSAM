@@ -46,10 +46,10 @@ if __name__ == "__main__":
         for img_id in tqdm(range(start_frame_id, end_frame_id)):
             delta_skip_odom = delta_skip_odom_other = None
             img_rgb = kitti.get_cam2(img_id)
+            current_pose, current_transform, delta_odom = vo_manager.update(img_id)
 
-            current_pose, current_transform, delta_odom = vo_manager.update(
-                img_id)
-            # if((img_id-config["start_frame_num"]-1)%skip_num==0):
+            # comment this out to remove skip connections
+            #if((img_id-config["start_frame_num"]-1) % skip_num == 0):
             #    prev_frame_id = img_id - skip_num
             #    other_prev_frame_id = img_id - skip_num + 2
             #    new_frame_id = img_id
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
         # wrte the factor graph into log and close
         fg_logger.write_factor_graph(fg.current_estimate)
-        # print(fg.graph)
+        print(fg.graph)
         logger.close()
         fg_logger.close()
     except:

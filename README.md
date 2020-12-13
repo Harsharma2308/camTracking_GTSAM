@@ -4,6 +4,7 @@
 Tracking only using cameras with a prior lidar map. We pose the problem on a factor graph.
 
 # Usage
+Need to generate map files before running this.
 ```
 # To run with factor graph
 python main_alt.py
